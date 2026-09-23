@@ -343,10 +343,15 @@ document
 
 });
 
-});
-
 document
-.getElementById("btnValiderAjout")
+.getElementById("btnFermerAjout")
+.addEventListener("click", () => {
+
+    document
+        .getElementById("popupAjout")
+        .style.display = "none";
+
+});
 .addEventListener("click",
 async ()=>{
 
