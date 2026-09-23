@@ -264,11 +264,19 @@ async ()=>{
         return;
     }
 
-    const donnees = {
-        equipe:equipe,
-        dateMatch:dateMatch,
-        joueurs:joueurs
-    };
+   const donnees = {
+    equipe: equipe,
+    dateMatch: dateMatch,
+    joueurs: joueurs
+};
+
+alert(
+    JSON.stringify(
+        donnees,
+        null,
+        2
+    )
+);
 
     try{
 
