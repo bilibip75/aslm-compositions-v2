@@ -2,49 +2,82 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>ASLM Composition V2</title>
+<title>ASLM Compositions V2</title>
 
 <style>
 
 body{
-font-family:Arial;
-background:#0d47a1;
-padding:20px;
+    font-family: Arial, sans-serif;
+    background:#0050a4;
+    margin:0;
+    padding:20px;
 }
 
 .container{
-background:white;
-max-width:900px;
-margin:auto;
-padding:20px;
-border-radius:10px;
+    max-width:1000px;
+    margin:auto;
+    background:white;
+    padding:20px;
+    border-radius:10px;
 }
 
 h1{
-text-align:center;
+    text-align:center;
+    color:#0050a4;
 }
 
 .section{
-margin-bottom:25px;
+    margin-bottom:20px;
+}
+
+label{
+    font-weight:bold;
+}
+
+select,
+input[type=date]{
+    width:100%;
+    padding:10px;
+    margin-top:5px;
 }
 
 .categorie{
-border:1px solid #ddd;
-padding:10px;
-margin-bottom:15px;
-border-radius:6px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    padding:10px;
+    margin-bottom:15px;
+}
+
+.categorie h3{
+    margin-top:0;
+    color:#0050a4;
+}
+
+.joueur{
+    margin-bottom:5px;
 }
 
 button{
-background:#0d47a1;
-color:white;
-border:none;
-padding:10px;
-cursor:pointer;
-border-radius:5px;
-width:100%;
+    width:100%;
+    padding:15px;
+    border:none;
+    background:#0050a4;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    border-radius:6px;
+}
+
+button:hover{
+    background:#003d80;
+}
+
+.message{
+    margin-top:15px;
+    text-align:center;
+    font-weight:bold;
 }
 
 </style>
@@ -62,14 +95,13 @@ width:100%;
 <label>Equipe</label>
 
 <select id="equipe">
-
-<option>U15 A</option>
-<option>U15 B</option>
-<option>U18</option>
-<option>Seniors A</option>
-<option>Seniors B</option>
-<option>Vétérans</option>
-
+    <option value="">Choisir une équipe</option>
+    <option>U15 A</option>
+    <option>U15 B</option>
+    <option>U18</option>
+    <option>Seniors A</option>
+    <option>Seniors B</option>
+    <option>Vétérans</option>
 </select>
 
 </div>
@@ -78,22 +110,19 @@ width:100%;
 
 <label>Date du match</label>
 
-<input
-type="date"
-id="dateMatch">
+<input type="date" id="dateMatch">
 
 </div>
 
-<div
-id="joueursContainer">
-Chargement...
+<div id="joueursContainer">
+Chargement des joueurs...
 </div>
-
-<br>
 
 <button id="btnEnvoyer">
 Envoyer la composition
 </button>
+
+<div id="message" class="message"></div>
 
 </div>
 
@@ -106,141 +135,187 @@ let joueursParCategorie = {};
 
 async function chargerJoueurs() {
 
-const response =
-await fetch(scriptURL);
+    try {
 
-const data =
-await response.json();
-console.log(data);
-  
+        const response = await fetch(scriptURL);
 
-joueursParCategorie =
-data.joueursParCategorie || {};
+        const data = await response.json();
 
-afficherJoueurs();
+        console.log("Réponse Apps Script", data);
 
+        if(!data.success){
+            throw new Error("Impossible de charger les joueurs");
+        }
+
+        joueursParCategorie =
+            data.joueursParCategorie || {};
+
+        afficherJoueurs();
+
+    } catch(err){
+
+        document.getElementById(
+            "joueursContainer"
+        ).innerHTML =
+            "<p>Erreur chargement joueurs</p>";
+
+        console.error(err);
+    }
 }
 
 function afficherJoueurs(){
 
-const container =
-document.getElementById(
-'joueursContainer'
-);
+    const container =
+        document.getElementById(
+            "joueursContainer"
+        );
 
-container.innerHTML='';
+    container.innerHTML = "";
 
-Object.keys(joueursParCategorie)
-.forEach(categorie=>{
+    Object.entries(
+        joueursParCategorie
+    ).forEach(([categorie,joueurs])=>{
 
-let html=
-'<div class="categorie">';
+        const bloc =
+            document.createElement("div");
 
-html +=
-'<h3>'+categorie+'</h3>';
+        bloc.className = "categorie";
 
-joueursParCategorie[categorie]
-.forEach(joueur=>{
+        const titre =
+            document.createElement("h3");
 
-html += `
-<div>
-<label>
-<input
-type="checkbox"
-class="joueur"
-value="${joueur}">
-${joueur}
-</label>
-</div>
-`;
+        titre.textContent =
+            categorie;
 
-});
+        bloc.appendChild(titre);
 
-html += '</div>';
+        joueurs.forEach(joueur=>{
 
-container.innerHTML += html;
+            const ligne =
+                document.createElement("div");
 
-});
+            ligne.className =
+                "joueur";
+
+            ligne.innerHTML = `
+                <label>
+                    <input
+                        type="checkbox"
+                        class="checkbox-joueur"
+                        value="${joueur}">
+                    ${joueur}
+                </label>
+            `;
+
+            bloc.appendChild(ligne);
+
+        });
+
+        container.appendChild(bloc);
+
+    });
 
 }
 
 document
-.getElementById(
-'btnEnvoyer'
-)
-.addEventListener(
-'click',
+.getElementById("btnEnvoyer")
+.addEventListener("click",
 async ()=>{
 
-const joueurs =
-[
-...document.querySelectorAll(
-'.joueur:checked'
-)
-]
-.map(cb=>cb.value);
+    const equipe =
+        document
+        .getElementById("equipe")
+        .value;
 
-if(
-joueurs.length===0
-){
-alert(
-'Sélectionnez au moins un joueur'
-);
-return;
-}
+    const dateMatch =
+        document
+        .getElementById("dateMatch")
+        .value;
 
-const donnees={
-equipe:
-document
-.getElementById(
-'equipe'
-).value,
+    if(!equipe){
+        alert("Choisissez une équipe");
+        return;
+    }
 
-dateMatch:
-document
-.getElementById(
-'dateMatch'
-).value,
+    if(!dateMatch){
+        alert("Choisissez une date");
+        return;
+    }
 
-joueurs
-};
+    const joueurs =
+        [...document.querySelectorAll(
+            ".checkbox-joueur:checked"
+        )]
+        .map(cb=>cb.value);
 
-const reponse =
-await fetch(
-scriptURL,
-{
-method:'POST',
-headers:{
-'Content-Type':
-'text/plain;charset=utf-8'
-},
-body:
-JSON.stringify(
-donnees
-)
-}
-);
+    if(joueurs.length===0){
+        alert("Sélectionnez au moins un joueur");
+        return;
+    }
 
-const resultat =
-await reponse.json();
+    const donnees = {
+        equipe:equipe,
+        dateMatch:dateMatch,
+        joueurs:joueurs
+    };
 
-if(resultat.success){
+    try{
 
-alert(
-'Composition enregistrée'
-);
+        const response =
+            await fetch(scriptURL,{
+                method:"POST",
+                headers:{
+                    "Content-Type":
+                    "text/plain;charset=utf-8"
+                },
+                body:JSON.stringify(
+                    donnees
+                )
+            });
 
-}else{
+        const resultat =
+            await response.json();
 
-alert(
-resultat.message
-);
+        if(resultat.success){
 
-}
+            document
+            .getElementById("message")
+            .style.color = "green";
+
+            document
+            .getElementById("message")
+            .textContent =
+                "✅ Composition enregistrée et mail envoyé";
+
+        }
+        else{
+
+            throw new Error(
+                resultat.message
+            );
+
+        }
+
+    }catch(err){
+
+        document
+        .getElementById("message")
+        .style.color = "red";
+
+        document
+        .getElementById("message")
+        .textContent =
+            "❌ " + err.message;
+
+        console.error(err);
+    }
 
 });
 
-chargerJoueurs();
+window.addEventListener(
+    "load",
+    chargerJoueurs
+);
 
 </script>
 
