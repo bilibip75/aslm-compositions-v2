@@ -129,9 +129,15 @@ Envoyer la composition
 <script>
 
 const scriptURL =
-'https://script.google.com/macros/s/AKfycbx0_SBy1VtfUsT8DP9fJfFygYZ_Qxw34Rn2lA2HyInjSKJvekjvgnVYpZ__uRdDwFMa6w/exec';
+'https://script.google.com/macros/s/AKfycbx-q_JJqETCq2mRcAP47ZyK3ZlPwUSuSfiJNjgk6kT9lOXNOWourxXVFFQYF_n-34q2/exec';
 
 let joueursParCategorie = {};
+
+console.log(joueursParCategorie);
+alert(
+    Object.keys(joueursParCategorie).length +
+    " catégories chargées"
+);
 
 async function chargerJoueurs() {
 
