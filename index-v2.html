@@ -298,25 +298,45 @@ document
 .addEventListener("click", () => {
 
     const liste =
-        document.getElementById(
-            "categorieJoueur"
-        );
+        document.getElementById("categorieJoueur");
 
-    liste.innerHTML = `
-        <option value="U13 (- 13 ans)">U13 (- 13 ans)</option>
-        <option value="U14 (- 14 ans)">U14 (- 14 ans)</option>
-        <option value="U15 (- 15 ans)">U15 (- 15 ans)</option>
-        <option value="U16 (- 16 ans)">U16 (- 16 ans)</option>
-        <option value="U17 (- 17 ans)">U17 (- 17 ans)</option>
-        <option value="U18 (- 18 ans)">U18 (- 18 ans)</option>
-        <option value="U19 (- 19 ans)">U19 (- 19 ans)</option>
-        <option value="Senior">Senior</option>
-        <option value="Vétéran">Vétéran</option>
-    `;
+    console.log("Bouton Ajouter Joueur cliqué");
 
-    document
-        .getElementById("popupAjout")
+    liste.innerHTML = "";
+
+    const categories = [
+        "U13 (- 13 ans)",
+        "U14 (- 14 ans)",
+        "U15 (- 15 ans)",
+        "U16 (- 16 ans)",
+        "U17 (- 17 ans)",
+        "U18 (- 18 ans)",
+        "U19 (- 19 ans)",
+        "Senior",
+        "Vétéran"
+    ];
+
+    categories.forEach(cat => {
+
+        const option =
+            document.createElement("option");
+
+        option.value = cat;
+        option.textContent = cat;
+
+        liste.appendChild(option);
+
+    });
+
+    console.log(
+        "Nombre d'options : ",
+        liste.options.length
+    );
+
+    document.getElementById("popupAjout")
         .style.display = "block";
+
+});
 
 });
 document
