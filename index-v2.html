@@ -304,14 +304,22 @@ document
 
     liste.innerHTML = "";
 
-    Object.keys(
-        joueursParCategorie
-    ).forEach(cat=>{
+    const categories = [
+        "U13 (- 13 ans)",
+        "U14 (- 14 ans)",
+        "U15 (- 15 ans)",
+        "U16 (- 16 ans)",
+        "U17 (- 17 ans)",
+        "U18 (- 18 ans)",
+        "U19 (- 19 ans)",
+        "Senior",
+        "Vétéran"
+    ];
+
+    categories.forEach(cat=>{
 
         const option =
-            document.createElement(
-                "option"
-            );
+            document.createElement("option");
 
         option.value = cat;
         option.textContent = cat;
