@@ -83,6 +83,8 @@ button:hover{
 </style>
 
 </head>
+
+<body>
 <div id="popupAjout" style="
 display:none;
 position:fixed;
@@ -131,8 +133,6 @@ Fermer
 </div>
 
 </div>
-<body>
-
 <div class="container">
 
 <h1>Composition ASLM</h1>
@@ -164,7 +164,13 @@ Fermer
 <div id="joueursContainer">
 Chargement des joueurs...
 </div>
+<button
+id="btnAjouterJoueur"
+type="button">
+➕ Ajouter un joueur
+</button>
 
+<br><br>
 <button id="btnEnvoyer">
 Envoyer la composition
 </button>
@@ -179,12 +185,6 @@ const scriptURL =
 'https://script.google.com/macros/s/AKfycbx-q_JJqETCq2mRcAP47ZyK3ZlPwUSuSfiJNjgk6kT9lOXNOWourxXVFFQYF_n-34q2/exec';
 
 let joueursParCategorie = {};
-
-console.log(joueursParCategorie);
-alert(
-    Object.keys(joueursParCategorie).length +
-    " catégories chargées"
-);
 
 async function chargerJoueurs() {
 
