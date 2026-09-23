@@ -73,7 +73,14 @@ button{
 button:hover{
     background:#003d80;
 }
+#btnAjouterJoueur{
+    background:#28a745;
+}
 
+#btnAjouterJoueur:hover{
+    background:#218838;
+}
+``
 .message{
     margin-top:15px;
     text-align:center;
@@ -85,7 +92,55 @@ button:hover{
 </head>
 
 <body>
+<div id="popupAjout" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.5);
+">
 
+<div style="
+background:white;
+width:400px;
+margin:100px auto;
+padding:20px;
+border-radius:10px;
+">
+
+<h3>Ajouter un joueur</h3>
+
+<input
+type="text"
+id="nomJoueur"
+placeholder="Nom">
+
+<br><br>
+
+<input
+type="text"
+id="prenomJoueur"
+placeholder="Prénom">
+
+<br><br>
+
+<select id="categorieJoueur"></select>
+
+<br><br>
+
+<button id="btnValiderAjout">
+Ajouter
+</button>
+
+<button id="btnFermerAjout">
+Fermer
+</button>
+
+</div>
+
+</div>
 <div class="container">
 
 <h1>Composition ASLM</h1>
@@ -117,6 +172,16 @@ button:hover{
 <div id="joueursContainer">
 Chargement des joueurs...
 </div>
+
+<br>
+
+<button
+id="btnAjouterJoueur"
+type="button">
+➕ Ajouter un joueur
+</button>
+
+<br><br>
 
 <button id="btnEnvoyer">
 Envoyer la composition
@@ -338,6 +403,25 @@ console.log(
 
 });
 
+document
+.getElementById("btnAjouterJoueur")
+.addEventListener("click",()=>{
+
+    document
+    .getElementById("popupAjout")
+    .style.display="block";
+
+});
+
+document
+.getElementById("btnFermerAjout")
+.addEventListener("click",()=>{
+
+    document
+    .getElementById("popupAjout")
+    .style.display="none";
+
+});
 window.addEventListener(
     "load",
     chargerJoueurs
