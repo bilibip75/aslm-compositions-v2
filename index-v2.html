@@ -187,8 +187,19 @@ placeholder="Prénom">
 
 <br><br>
 
-<select id="categorieJoueur"></select>
-
+<select id="categorieJoueur">
+    <option value="">Choisir une catégorie</option>
+    <option value="U13 (- 13 ans)">U13 (- 13 ans)</option>
+    <option value="U14 (- 14 ans)">U14 (- 14 ans)</option>
+    <option value="U15 (- 15 ans)">U15 (- 15 ans)</option>
+    <option value="U16 (- 16 ans)">U16 (- 16 ans)</option>
+    <option value="U17 (- 17 ans)">U17 (- 17 ans)</option>
+    <option value="U18 (- 18 ans)">U18 (- 18 ans)</option>
+    <option value="U19 (- 19 ans)">U19 (- 19 ans)</option>
+    <option value="Senior">Senior</option>
+    <option value="Vétéran">Vétéran</option>
+</select>
+    
 <button id="btnValiderAjout">
 Ajouter
 </button>
@@ -297,26 +308,7 @@ document
 .getElementById("btnAjouterJoueur")
 .addEventListener("click", () => {
 
-    const liste =
-        document.getElementById("categorieJoueur");
-    alert("BTN AJOUT CLIQUE");
-
-    console.log("Bouton Ajouter Joueur cliqué");
-
-    liste.innerHTML = "";
-    alert("SELECT TROUVÉ : " + (liste !== null));
-
-    const categories = [
-        "U13 (- 13 ans)",
-        "U14 (- 14 ans)",
-        "U15 (- 15 ans)",
-        "U16 (- 16 ans)",
-        "U17 (- 17 ans)",
-        "U18 (- 18 ans)",
-        "U19 (- 19 ans)",
-        "Senior",
-        "Vétéran"
-    ];
+    
 
     categories.forEach(cat => {
 
@@ -342,13 +334,14 @@ document
 
 });
 document
-.getElementById("btnFermerAjout")
-.addEventListener("click",()=>{
+.getElementById("btnAjouterJoueur")
+.addEventListener("click", () => {
 
     document
-    .getElementById("popupAjout")
-    .style.display =
-    "none";
+        .getElementById("popupAjout")
+        .style.display = "block";
+
+});
 
 });
 
