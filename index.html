@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>ASLM Composition V2</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0d47a1;
+padding:20px;
+}
+
+.container{
+background:white;
+max-width:900px;
+margin:auto;
+padding:20px;
+border-radius:10px;
+}
+
+h1{
+text-align:center;
+}
+
+.section{
+margin-bottom:25px;
+}
+
+.categorie{
+border:1px solid #ddd;
+padding:10px;
+margin-bottom:15px;
+border-radius:6px;
+}
+
+button{
+background:#0d47a1;
+color:white;
+border:none;
+padding:10px;
+cursor:pointer;
+border-radius:5px;
+width:100%;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Composition ASLM</h1>
+
+<div class="section">
+
+<label>Equipe</label>
+
+<select id="equipe">
+
+<option>U15 A</option>
+<option>U15 B</option>
+<option>U18</option>
+<option>Seniors A</option>
+<option>Seniors B</option>
+<option>Vétérans</option>
+
+</select>
+
+</div>
+
+<div class="section">
+
+<label>Date du match</label>
+
+<input
+type="date"
+id="dateMatch">
+
+</div>
+
+<div
+id="joueursContainer">
+Chargement...
+</div>
+
+<br>
+
+<button id="btnEnvoyer">
+Envoyer la composition
+</button>
+
+</div>
+
+<script>
+
+const scriptURL =
+'https://script.google.com/macros/s/AKfycbx0_SBy1VtfUsT8DP9fJfFygYZ_Qxw34Rn2lA2HyInjSKJvekjvgnVYpZ__uRdDwFMa6w/exec';
+
+let joueursParCategorie = {};
+
+async function chargerJoueurs() {
+
+const response =
+await fetch(scriptURL);
+
+const data =
+await response.json();
+
+joueursParCategorie =
+data.joueursParCategorie || {};
+
+afficherJoueurs();
+
+}
+
+function afficherJoueurs(){
+
+const container =
+document.getElementById(
+'joueursContainer'
+);
+
+container.innerHTML='';
+
+Object.keys(joueursParCategorie)
+.forEach(categorie=>{
+
+let html=
+'<div class="categorie">';
+
+html +=
+'<h3>'+categorie+'</h3>';
+
+joueursParCategorie[categorie]
+.forEach(joueur=>{
+
+html += `
+<div>
+<label>
+<input
+type="checkbox"
+class="joueur"
+value="${joueur}">
+${joueur}
+</label>
+</div>
+`;
+
+});
+
+html += '</div>';
+
+container.innerHTML += html;
+
+});
+
+}
+
+document
+.getElementById(
+'btnEnvoyer'
+)
+.addEventListener(
+'click',
+async ()=>{
+
+const joueurs =
+[
+...document.querySelectorAll(
+'.joueur:checked'
+)
+]
+.map(cb=>cb.value);
+
+if(
+joueurs.length===0
+){
+alert(
+'Sélectionnez au moins un joueur'
+);
+return;
+}
+
+const donnees={
+equipe:
+document
+.getElementById(
+'equipe'
+).value,
+
+dateMatch:
+document
+.getElementById(
+'dateMatch'
+).value,
+
+joueurs
+};
+
+const reponse =
+await fetch(
+scriptURL,
+{
+method:'POST',
+headers:{
+'Content-Type':
+'text/plain;charset=utf-8'
+},
+body:
+JSON.stringify(
+donnees
+)
+}
+);
+
+const resultat =
+await reponse.json();
+
+if(resultat.success){
+
+alert(
+'Composition enregistrée'
+);
+
+}else{
+
+alert(
+resultat.message
+);
+
+}
+
+});
+
+chargerJoueurs();
+
+</script>
+
+</body>
+</html>
