@@ -248,6 +248,11 @@ async ()=>{
         )]
         .map(cb=>cb.value);
 
+    console.log(
+        "JOUEURS SELECTIONNES :", 
+        joueurs
+    );
+
     if(joueurs.length===0){
         alert("Sélectionnez au moins un joueur");
         return;
@@ -261,6 +266,13 @@ async ()=>{
 
     try{
 
+console.log(
+    JSON.stringify(
+        donnees,
+        null,
+        2
+    )
+);
         const response =
             await fetch(scriptURL,{
                 method:"POST",
