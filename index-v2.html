@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>ASLM Compositions V2</title>
+
+<style>
+
+body{
+    font-family:Arial,sans-serif;
+    background:#0050a4;
+    margin:0;
+    padding:20px;
+}
+
+.container{
+    max-width:1000px;
+    margin:auto;
+    background:white;
+    padding:25px;
+    border-radius:10px;
+}
+
+h1{
+    text-align:center;
+    color:#0050a4;
+}
+
+.section{
+    margin-bottom:20px;
+}
+
+select,
+input[type=date],
+input[type=text]{
+    width:100%;
+    padding:10px;
+    box-sizing:border-box;
+}
+
+.categorie{
+    border:1px solid #ddd;
+    border-radius:8px;
+    padding:10px;
+    margin-bottom:10px;
+}
+
+.categorie h3{
+    margin-top:0;
+    color:#0050a4;
+}
+
+.joueur{
+    margin-bottom:5px;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:16px;
+    color:white;
+    background:#0050a4;
+}
+
+button:hover{
+    background:#003b7d;
+}
+
+#btnAjouterJoueur{
+    background:#28a745;
+}
+
+#btnAjouterJoueur:hover{
+    background:#218838;
+}
+
+.message{
+    margin-top:15px;
+    text-align:center;
+    font-weight:bold;
+}
+
+.modal{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,.5);
+}
+
+.modal-content{
+    background:white;
+    width:400px;
+    margin:80px auto;
+    padding:20px;
+    border-radius:10px;
+}
+
+.modal-content button{
+    margin-top:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Composition ASLM</h1>
+
+<div class="section">
+
+<label>Equipe</label>
+
+<select id="equipe">
+<option value="">Choisir une équipe</option>
+<option>U15 A</option>
+<option>U15 B</option>
+<option>U18</option>
+<option>Seniors A</option>
+<option>Seniors B</option>
+<option>Vétérans</option>
+</select>
+
+</div>
+
+<div class="section">
+
+<label>Date du match</label>
+
+<input type="date" id="dateMatch">
+
+</div>
+
+<div id="joueursContainer">
+Chargement des joueurs...
+</div>
+
+<br>
+
+<button type="button" id="btnAjouterJoueur">
+➕ Ajouter un joueur
+</button>
+
+<br><br>
+
+<button id="btnEnvoyer">
+Envoyer la composition
+</button>
+
+<div id="message" class="message"></div>
+
+</div>
+
+<div id="popupAjout" class="modal">
+
+<div class="modal-content">
+
+<h3>Ajouter un joueur</h3>
+
+<input
+type="text"
+id="nomJoueur"
+placeholder="Nom">
+
+<br><br>
+
+<input
+type="text"
+id="prenomJoueur"
+placeholder="Prénom">
+
+<br><br>
+
+<select id="categorieJoueur"></select>
+
+<button id="btnValiderAjout">
+Ajouter
+</button>
+
+<button id="btnFermerAjout">
+Fermer
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+const scriptURL =
+'https://script.google.com/macros/s/AKfycbx-q_JJqETCq2mRcAP47ZyK3ZlPwUSuSfiJNjgk6kT9lOXNOWourxXVFFQYF_n-34q2/exec';
+
+let joueursParCategorie = {};
+
+async function chargerJoueurs(){
+
+    try{
+
+        const response =
+            await fetch(scriptURL);
+
+        const data =
+            await response.json();
+
+        if(!data.success){
+            throw new Error(
+                'Impossible de charger les joueurs'
+            );
+        }
+
+        joueursParCategorie =
+            data.joueursParCategorie || {};
+
+        afficherJoueurs();
+
+    }
+    catch(err){
+
+        document.getElementById(
+            "joueursContainer"
+        ).innerHTML =
+            "Erreur chargement joueurs";
+
+        console.error(err);
+
+    }
+
+}
+
+function afficherJoueurs(){
+
+    const container =
+        document.getElementById(
+            "joueursContainer"
+        );
+
+    container.innerHTML = "";
+
+    Object.entries(
+        joueursParCategorie
+    ).forEach(([categorie,joueurs])=>{
+
+        const bloc =
+            document.createElement("div");
+
+        bloc.className =
+            "categorie";
+
+        bloc.innerHTML =
+            "<h3>"+categorie+"</h3>";
+
+        joueurs.forEach(joueur=>{
+
+            const ligne =
+                document.createElement("div");
+
+            ligne.className =
+                "joueur";
+
+            ligne.innerHTML = `
+            <label>
+                <input
+                type="checkbox"
+                class="checkbox-joueur"
+                value="${joueur}">
+                ${joueur}
+            </label>
+            `;
+
+            bloc.appendChild(ligne);
+
+        });
+
+        container.appendChild(bloc);
+
+    });
+
+}
+
+document
+.getElementById("btnAjouterJoueur")
+.addEventListener("click",()=>{
+
+    const liste =
+        document.getElementById(
+            "categorieJoueur"
+        );
+
+    liste.innerHTML = "";
+
+    Object.keys(
+        joueursParCategorie
+    ).forEach(cat=>{
+
+        const option =
+            document.createElement(
+                "option"
+            );
+
+        option.value = cat;
+        option.textContent = cat;
+
+        liste.appendChild(option);
+
+    });
+
+    document
+    .getElementById("popupAjout")
+    .style.display =
+    "block";
+
+});
+
+document
+.getElementById("btnFermerAjout")
+.addEventListener("click",()=>{
+
+    document
+    .getElementById("popupAjout")
+    .style.display =
+    "none";
+
+});
+
+document
+.getElementById("btnValiderAjout")
+.addEventListener("click",
+async ()=>{
+
+    const nom =
+        document.getElementById(
+            "nomJoueur"
+        ).value.trim();
+
+    const prenom =
+        document.getElementById(
+            "prenomJoueur"
+        ).value.trim();
+
+    const categorie =
+        document.getElementById(
+            "categorieJoueur"
+        ).value;
+
+    if(
+        !nom ||
+        !prenom ||
+        !categorie
+    ){
+        alert(
+            "Tous les champs sont obligatoires"
+        );
+        return;
+    }
+
+    const response =
+        await fetch(
+            scriptURL,
+            {
+                method:"POST",
+                headers:{
+                    "Content-Type":
+                    "text/plain;charset=utf-8"
+                },
+                body:JSON.stringify({
+                    action:"ajouterJoueur",
+                    nom:nom,
+                    prenom:prenom,
+                    categorie:categorie
+                })
+            }
+        );
+
+    const resultat =
+        await response.json();
+
+    if(resultat.success){
+
+        alert("Joueur ajouté");
+
+        document
+        .getElementById("popupAjout")
+        .style.display =
+        "none";
+
+        chargerJoueurs();
+
+    }
+    else{
+
+        alert(
+            resultat.message
+        );
+
+    }
+
+});
+
+document
+.getElementById("btnEnvoyer")
+.addEventListener("click",
+async ()=>{
+
+    const equipe =
+        document.getElementById(
+            "equipe"
+        ).value;
+
+    const dateMatch =
+        document.getElementById(
+            "dateMatch"
+        ).value;
+
+    if(!equipe){
+        alert(
+            "Choisissez une équipe"
+        );
+        return;
+    }
+
+    if(!dateMatch){
+        alert(
+            "Choisissez une date"
+        );
+        return;
+    }
+
+    const joueurs =
+        [...document.querySelectorAll(
+            ".checkbox-joueur:checked"
+        )]
+        .map(cb=>cb.value);
+
+    if(joueurs.length===0){
+        alert(
+            "Sélectionnez au moins un joueur"
+        );
+        return;
+    }
+
+    const response =
+        await fetch(
+            scriptURL,
+            {
+                method:"POST",
+                headers:{
